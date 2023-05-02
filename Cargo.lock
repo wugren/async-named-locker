@@ -73,7 +73,7 @@ dependencies = [
 
 [[package]]
 name = "async-named-locker"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "async-std",
  "lazy_static",

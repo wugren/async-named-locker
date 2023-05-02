@@ -70,29 +70,13 @@ impl LockerManager {
     }
 }
 
-pub trait IntoString {
-    fn into_string(self) -> String;
-}
-
-impl IntoString for &str {
-    fn into_string(self) -> String {
-        self.to_string()
-    }
-}
-
-impl IntoString for String {
-    fn into_string(self) -> String {
-        self
-    }
-}
-
 pub struct Locker {
     locker_id: String,
 }
 
 impl Locker {
-    pub async fn get_locker<T: IntoString>(locker_id: T) -> Self {
-        let id = locker_id.into_string();
+    pub async fn get_locker(locker_id: impl Into<String>) -> Self {
+        let id = locker_id.into();
         LOCK_MANAGER.lock(id.clone()).await;
         Self {
             locker_id: id
