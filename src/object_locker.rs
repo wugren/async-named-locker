@@ -128,18 +128,16 @@ mod test {
     use std::time::Duration;
     use crate::Locker;
 
-    #[test]
-    fn test() {
-        async_std::task::block_on(async {
-            let _locker = Locker::get_locker("test".to_string()).await;
-            let i = Arc::new(Mutex::new(0));
-            let i_copy = i.clone();
-            async_std::task::spawn(async move {
-                let _locker = Locker::get_locker("test").await;
-                assert_eq!(*i_copy.lock().unwrap(), 1);
-            });
-            async_std::task::sleep(Duration::from_secs(5)).await;
-            *i.lock().unwrap() = 1;
+    #[tokio::test]
+    async fn test() {
+        let _locker = Locker::get_locker("test".to_string()).await;
+        let i = Arc::new(Mutex::new(0));
+        let i_copy = i.clone();
+        tokio::spawn(async move {
+            let _locker = Locker::get_locker("test").await;
+            assert_eq!(*i_copy.lock().unwrap(), 1);
         });
+        tokio::time::sleep(Duration::from_secs(5)).await;
+        *i.lock().unwrap() = 1;
     }
 }
